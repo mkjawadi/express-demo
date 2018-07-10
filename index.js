@@ -1,4 +1,5 @@
 const config =  require('config');
+const debug = require('debug')('app:startup');
 const Joi = require('joi');
 const helmet = require('helmet');
 const morgan = require('morgan');
@@ -6,6 +7,10 @@ const logger = require('./logger');
 const authennticator = require('./authendicator');
 const express = require('express');
 const app = express();
+
+// Templating engine
+app.set('view engine', 'pug');
+app.set('views', './views');
 
 //***** Built-in middleware
 app.use(express.json());
@@ -31,7 +36,7 @@ console.log(`Password: ${config.get('mail.password')}`);
 if(app.get('env') === 'development') {
     //HTTP request logger middleware for node.js
     app.use(morgan('tiny'));
-    console.log('Morgan enabled...');
+    debug('Morgan enabled...');
 }
 
 
@@ -51,7 +56,8 @@ function validateCourse(course) {
 }
 
 app.get('/', (req, res) => {
-    res.send('Hello world');
+    // res.send('Hello world');
+    res.render('index', {title: 'My Express App', message: 'Hello Folks!'})
 });
 
 app.get('/api/courses', (req, res) => {
